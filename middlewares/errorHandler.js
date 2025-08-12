@@ -7,8 +7,6 @@ function errorHandler(err, req, res, next) {
   res.status(statusCode).json({
     success: false,
     message: message,
-    // En dev, tu peux aussi envoyer la stack pour déboguer :
-    // stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
   });
 }
 

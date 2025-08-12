@@ -10,7 +10,7 @@ exports.creatUser = async(req, res) =>{
     const {nom, prenom, email, role,password} = req.body;
     try{
         const exist = await User.findOne({email});
-        if(exist) return res.status(404).json({message: "L'email est déjà utilisé"});
+        if(exist) return res.status(409).json({message: "L'email est déjà utilisé"});
         
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -97,7 +97,7 @@ exports.updateUser = async(req, res)  => {
         res.status(500).json({message: "Erreur du serveur", erreur: err.message});
     }
     } else{
-        res.status(404).json({message: "Vous n'avez pas le droit d'executer cette tache"})
+        res.status(403).json({message: "Vous n'avez pas le droit d'executer cette tache"})
     }
 };
 
@@ -117,6 +117,6 @@ exports.deleteUser = async(req, res) =>{
             res.status(500).json({message: "Erreur du serveur", erreur: err.message});
         }
     } else {
-        res.status(404).json({message: "Vous n'avez pas le droit d'éxecuté cette tache!"});
+        res.status(403).json({message: "Vous n'avez pas le droit d'éxecuté cette tache!"});
     }
 };
