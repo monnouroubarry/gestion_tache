@@ -47,7 +47,7 @@ exports.loginUser = async (req, res) => {
         //  Générer le token
         const token = jwt.sign(
             { email: user.email, role: user.role, id: user._id },
-            process.env.JWT_SECRET, // utilise la clé du .env
+            process.env.JWT_SECRET, 
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
@@ -89,7 +89,6 @@ exports.updateUser = async(req, res)  => {
             const user = await User.findByIdAndUpdate(
                 targetId,
                 update,
-                req.user.id,
                 {new: true, runValidators: true}
             );
             if(!user) return res.status(400).json({message: "Aucun utlisateur touvé"});

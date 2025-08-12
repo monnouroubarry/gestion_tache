@@ -19,6 +19,21 @@ exports.addTache = async(req, res) =>{
     }
 };
 
+//Modifier une tache par l'id
+exports.updateTask = async(req, res) => {
+    try{
+        const task = await Tache.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new: true, runValidators: true}
+        ); 
+        if(!task) return res.status(400).json({message: "tache non trouvé"});
+        res.status(200).json({message: "Tache mise à jour avec succès!", task});
+    }catch (err){
+        res.status(400).json({message: "Erreur lors de la modification de la tache", erreur: err.message});
+    }
+};
+
 //lister toutes les taches
 exports.getTasks = async(req, res) =>{
     try{
@@ -29,6 +44,17 @@ exports.getTasks = async(req, res) =>{
         res.status(500).json({message: "Erreur du serveur", erreur: err.message});
     }
 };
+
+//lister une tache par l'id
+exports.getTask = async(req, res) =>{
+    try{
+        const task = await Tache.findById(req.params.id);
+        if(!task) return res.status(401).json({message: "Tache non trouvée"});
+        res.status(200).json({message: "La tache trouvée", task});
+    }catch(err){
+        res.status(500).json({message: "Erreur du server", erreur: err.message});
+    }
+}
 
 //Supprimer une tache par id
 exports.deleteTask = async(req, res) =>{
