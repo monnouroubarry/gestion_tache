@@ -71,15 +71,23 @@ exports.getUsers = async(req, res) => {
     }
 };
 
+//Fonction pour voir un utilisateur par id
+exports.getUser = async(req, res) =>{
+    try{
+        const user = await User.findById(req.params.id);
+        if(!user) return res.status(404).json({message: "Utilidateur non trouvé"});
+        res.status(200).json({message: "Utilisateur trouvé", user});
+    } catch(err){
+        res.status(500).json({message: "Erreur du serveur", erreur: err.message});
+    }
+}
+
 // Fonction pour mettre à jour les utilisateur
 exports.updateUser = async(req, res)  => {
     const targetId = req.params.id;
-    const requester = req.user;
-
-    const exist = await User.findById(targetId);
+    
     if(!exist) return res.status(400).json({message: "Aucun utilisateur trouvé"});
 
-    if( targetId === requester.id || exist.role === 'user' && requester.role === 'admin'){
         try{
             const update = req.body;
             if(update.password) {
@@ -96,9 +104,6 @@ exports.updateUser = async(req, res)  => {
     }catch(err){
         res.status(500).json({message: "Erreur du serveur", erreur: err.message});
     }
-    } else{
-        res.status(403).json({message: "Vous n'avez pas le droit d'executer cette tache"})
-    }
 };
 
 // Suppréssion d'un utilisateur par un admin ou par soi-même
@@ -106,17 +111,11 @@ exports.deleteUser = async(req, res) =>{
     const targetId = req.params.id;
     const requester = req.user;
 
-    const exist = await User.findById(targetId);
-    if(!exist) return res.status(404).json({message: "Aucun utilisateur trouvé"});
 
-    if(targetId === requester.id || exist.role === 'user' && requester.role === 'admin'){
         try{
             await User.findByIdAndDelete(targetId);
             res.status(200).json({message: "Utilisateur supprimé avec succès"});
         }catch(err){
             res.status(500).json({message: "Erreur du serveur", erreur: err.message});
         }
-    } else {
-        res.status(403).json({message: "Vous n'avez pas le droit d'éxecuté cette tache!"});
-    }
 };

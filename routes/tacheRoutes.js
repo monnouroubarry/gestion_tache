@@ -8,10 +8,10 @@ const validateTache = require('../middlewares/validateTache');
 router.post('/ajouter-tache', auth, validateTache, tacheController.addTache);
 
 // route pour afficher toutes les taches
-router.get('/voir-taches', auth, tacheController.getTasks);
+router.get('/voir-taches', tacheController.getTasks);
 
 //route pour afficher une tache par son id
-router.get('/voir-tache/:id', auth, tacheController.getTask);
+router.get('/voir-tache/:id', tacheController.getTask);
 
 //route pour supprimer une tache par son id
 router.delete('/supprimer-tache/:id', auth, tacheController.deleteTask);

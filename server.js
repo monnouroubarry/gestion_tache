@@ -10,9 +10,9 @@ const useTaches = require('./routes/tacheRoutes');
 
 // ------------- MIDDLEWARE GLOBAL--------------
 
+app.use(express.json());
 const logger = require('./middlewares/logger');
 app.use(logger)
-app.use(express.json());
 
 // -------------- ROUTES-----------------
 app.use('/api', useRoutes);

@@ -25,6 +25,7 @@ const schemaUser = joi.object({
             'eny.required': 'Le champ email est obligatioire',
             'string.email': 'Veuillez saisir un email valide'
         }),
+    role: joi.string(),
     password: joi.string()
     .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'))
     .required()
