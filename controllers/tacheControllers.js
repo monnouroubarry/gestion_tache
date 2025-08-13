@@ -1,12 +1,13 @@
 const Tache = require('../models/Tache');
 
 exports.addTache = async(req, res) =>{
-    const {titre, description, status, dateEcheance} = req.body;
+    const {titre, description, status, priorite, dateEcheance} = req.body;
     try {
         const newTask = new Tache({
             titre,
             description,
             status,
+            priorite,
             dateEcheance,
             createdBy: req.user.id
         });
@@ -64,10 +65,10 @@ exports.getTasksPagination = async (req, res) => {
     }
 };
 
-// lister les taches avec filtre par status
+// lister les taches avec filtre par status ou priorité
 exports.getTasksFiltration = async (req, res) => {
     try{
-        const {page = 1, limit = 5, status} = req.query;
+        const {page = 1, limit = 5, status, priorite} = req.query;
         const filter = {};
         if(status) filter.status = status;
 
@@ -87,6 +88,41 @@ exports.getTasksFiltration = async (req, res) => {
         res.status(500).json({message: "Erreur du serveur", erreur: err.message});
     }
 };
+
+exports.getTasksPageFiltre = async (req, res) => {
+  try {
+    const { page = 1, limit = 5, status, priorite } = req.query;
+
+    // On construit le filtre dynamiquement avec insensibilité aux accents et casse
+    let filter = {};
+    if (status) {
+      filter.status = { $regex: `^${status}$`, $options: "i" }; // i = ignore case
+    }
+    if (priorite) {
+      filter.priorite = { $regex: `^${priorite}$`, $options: "i" };
+    }
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 5;
+
+    const taches = await Tache.find(filter)
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum)
+      .collation({ locale: "fr", strength: 1 }); // gère accents et casse
+
+    const total = await Tache.countDocuments(filter).collation({ locale: "fr", strength: 1 });
+
+    res.status(200).json({
+      total,
+      page: pageNum,
+      totalPages: Math.ceil(total / limitNum),
+      taches
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Erreur du serveur", erreur: err.message });
+  }
+};
+
 
 //lister une tache par l'id
 exports.getTask = async(req, res) =>{
