@@ -14,7 +14,7 @@ router.get('/voir-taches', tacheController.getTasks);
 router.get('/voir-taches/pagination', tacheController.getTasksPagination);
 
 // route pour afficher toutes les taches par statut
-router.get('/voir-taches/filtre', tacheController.getTasksPageFiltre);
+router.get('/voir-taches/filtre', tacheController.getTasksFiltration);
 
 //route pour afficher une tache par son id
 router.get('/voir-tache/:id', tacheController.getTask);

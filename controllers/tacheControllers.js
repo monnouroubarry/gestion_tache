@@ -71,14 +71,13 @@ exports.getTasksFiltration = async (req, res) => {
         const {page = 1, limit = 5, status, priorite} = req.query;
         const filter = {};
         if(status) filter.status = status;
-
+        if (priorite) filter.priorite = priorite;
         const taches = await Tache.find(filter)
             .limit(Number(limit))
             .skip((Number(page) -1) * Number(limit));
 
         const total = await Tache.countDocuments(filter);
         res.status(200).json({
-            message: `Liste des taches '${status}'`,
             total,
             page: Number(page),
             totalePage: Math.ceil(total / limit),
@@ -87,40 +86,6 @@ exports.getTasksFiltration = async (req, res) => {
     }catch(err){
         res.status(500).json({message: "Erreur du serveur", erreur: err.message});
     }
-};
-
-exports.getTasksPageFiltre = async (req, res) => {
-  try {
-    const { page = 1, limit = 5, status, priorite } = req.query;
-
-    // On construit le filtre dynamiquement avec insensibilité aux accents et casse
-    let filter = {};
-    if (status) {
-      filter.status = { $regex: `^${status}$`, $options: "i" }; // i = ignore case
-    }
-    if (priorite) {
-      filter.priorite = { $regex: `^${priorite}$`, $options: "i" };
-    }
-
-    const pageNum = parseInt(page, 10) || 1;
-    const limitNum = parseInt(limit, 10) || 5;
-
-    const taches = await Tache.find(filter)
-      .skip((pageNum - 1) * limitNum)
-      .limit(limitNum)
-      .collation({ locale: "fr", strength: 1 }); // gère accents et casse
-
-    const total = await Tache.countDocuments(filter).collation({ locale: "fr", strength: 1 });
-
-    res.status(200).json({
-      total,
-      page: pageNum,
-      totalPages: Math.ceil(total / limitNum),
-      taches
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur du serveur", erreur: err.message });
-  }
 };
 
 
