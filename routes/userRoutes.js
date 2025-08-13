@@ -22,7 +22,7 @@ router.get('/voir-user/:id', userController.getUser);
 router.put('/update/:id', auth, validateUser, authorizeRole('user', 'admin'), userController.updateUser);
 
 // Supréssion d'un utilisateur par lui-même ou par un admin
-router.delete('/supprimer-user/:id', auth, authorizeRole('user', 'admin'),  userController.deleteUser);
+router.delete('/supprimer-user/:id', auth, authorizeRole('admin'),  userController.deleteUser);
 
 
 module.exports = router;

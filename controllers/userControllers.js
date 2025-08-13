@@ -109,13 +109,11 @@ exports.updateUser = async(req, res)  => {
 // Suppréssion d'un utilisateur par un admin ou par soi-même
 exports.deleteUser = async(req, res) =>{
     const targetId = req.params.id;
-    const requester = req.user;
-
-
-        try{
-            await User.findByIdAndDelete(targetId);
-            res.status(200).json({message: "Utilisateur supprimé avec succès"});
-        }catch(err){
-            res.status(500).json({message: "Erreur du serveur", erreur: err.message});
-        }
+    // const requester = req.user;
+    try{
+        await User.findByIdAndDelete(targetId);
+        res.status(200).json({message: "Utilisateur supprimé avec succès"});
+    }catch(err){
+        res.status(500).json({message: "Erreur du serveur", erreur: err.message});
+    }
 };

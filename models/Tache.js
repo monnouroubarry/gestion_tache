@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const schemaTache = new mongoose.Schema({
     titre: {type: String, required: true},
     description: {type: String, required: true},
-    status: {type: String, required: true, enum: ['encours', 'terminée'], default: 'encours'},
+    status: {type: String, required: true, enum: ['encours', 'terminee'], default: 'encours'},
     dateEcheance: {type: Date},
     createdBy: {type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -5,10 +5,16 @@ const router = express.Router();
 const validateTache = require('../middlewares/validateTache');
 
 // route pour ajouter une tache
-router.post('/ajouter-tache', auth, validateTache, tacheController.addTache);
+router.post('/ajouter-tache', auth, tacheController.addTache);
 
 // route pour afficher toutes les taches
-router.get('/voir-taches', tacheController.getTasks);
+router.get('/voir-taches', validateTache, tacheController.getTasks);
+
+// route pour afficher toutes les taches par pagination
+router.get('/voir-taches/pagination', tacheController.getTasksPagination);
+
+// route pour afficher toutes les taches par statut
+router.get('/voir-taches/filtre', tacheController.getTasksFiltration);
 
 //route pour afficher une tache par son id
 router.get('/voir-tache/:id', tacheController.getTask);
@@ -17,6 +23,6 @@ router.get('/voir-tache/:id', tacheController.getTask);
 router.delete('/supprimer-tache/:id', auth, tacheController.deleteTask);
 
 //route pour mettre à jour une tache
-router.put('/modifier-tache/:id', auth, validateTache, tacheController.updateTask);
+router.put('/modifier-tache/:id', auth, tacheController.updateTask);
 
 module.exports = router;

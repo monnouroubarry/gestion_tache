@@ -16,10 +16,10 @@ const schemaTache = joi.object({
         }),
    
     status: joi.string()
-        .valid('encours', 'terminée')
+        .valid('encours', 'terminee')
         .optional()
         .messages({
-            'any.only': 'Le statut doit être soit "encours" soit "terminée"'
+            'any.only': 'Le statut doit être soit "encours" soit "terminee" et n\'oubliez les accents ne sont pas autorisés'
         }),
     
     dateEcheance: joi.date()
