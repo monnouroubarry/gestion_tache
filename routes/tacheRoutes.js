@@ -3,9 +3,10 @@ const auth = require('../middlewares/authentification');
 const express = require('express');
 const router = express.Router();
 const validateTache = require('../middlewares/validateTache');
+const authorizeRole = require('../middlewares/authorizeRole');
 
 // route pour ajouter une tache
-router.post('/ajouter-tache', auth,  validateTache, tacheController.addTache);
+router.post('/ajouter-tache', auth, authorizeRole('admin', 'leader'),  validateTache, tacheController.addTache);
 
 // route pour afficher toutes les taches
 router.get('/voir-taches', tacheController.getTasks);

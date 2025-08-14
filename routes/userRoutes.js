@@ -19,7 +19,7 @@ router.get('/voir-users', userController.getUsers);
 router.get('/voir-user/:id', userController.getUser);
 
 // mise à jours de ses information ou par un admin
-router.put('/update/:id', auth, validateUser, authorizeRole('user', 'admin'), userController.updateUser);
+router.put('/update/:id', auth, authorizeRole('user', 'admin'), userController.updateUser);
 
 // Supréssion d'un utilisateur par lui-même ou par un admin
 router.delete('/supprimer-user/:id', auth, authorizeRole('admin'),  userController.deleteUser);

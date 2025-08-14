@@ -6,6 +6,10 @@ const schemaTache = new mongoose.Schema({
     status: {type: String, required: true, enum: ['encours', 'terminee'], default: 'encours'},
     priorite: {type: String, required: true, enum: ['faible', 'moyenne', 'elevee'], default: 'faible'},
     dateEcheance: {type: Date},
+    assignerA: {type: mongoose.Schema.Types.ObjectId,
+        ref: 'Membre',
+        required: true
+    },
     createdBy: {type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true

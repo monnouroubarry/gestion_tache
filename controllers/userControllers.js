@@ -85,6 +85,7 @@ exports.getUser = async(req, res) =>{
 // Fonction pour mettre à jour les utilisateur
 exports.updateUser = async(req, res)  => {
     const targetId = req.params.id;
+    const exist = await User.findById(targetId);
     
     if(!exist) return res.status(400).json({message: "Aucun utilisateur trouvé"});
 

@@ -28,6 +28,7 @@ const schemaTache = joi.object({
             .messages({
                 'any.only' : 'le statut la priorité doit être soit "faible", "moyenne", "elevee" et sans mettre les accents' 
             }),
+        assignerA: joi.string(),
 
     dateEcheance: joi.date()
         .required()

@@ -5,8 +5,9 @@ const PORT = process.env.PORT;
 
 const express = require('express');
 const app = express();
-const useRoutes = require('./routes/userRoutes');
+const useUser = require('./routes/userRoutes');
 const useTaches = require('./routes/tacheRoutes');
+const useMembre = require('./routes/membreRoutes');
 
 // ------------- MIDDLEWARE GLOBAL--------------
 
@@ -15,8 +16,9 @@ const logger = require('./middlewares/logger');
 app.use(logger)
 
 // -------------- ROUTES-----------------
-app.use('/api', useRoutes);
+app.use('/api', useUser);
 app.use('/api', useTaches);
+app.use('/api', useMembre);
 
 
 // --------- MIDDLEWARES D'ERREUR-----------------

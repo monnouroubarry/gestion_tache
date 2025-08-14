@@ -1,14 +1,25 @@
 const Tache = require('../models/Tache');
+const Membre = require('../models/Membre');
 
 exports.addTache = async(req, res) =>{
-    const {titre, description, status, priorite, dateEcheance} = req.body;
+    const {titre, description, status, priorite, dateEcheance, assignerA} = req.body;
     try {
+        const requester = req.user
+
+        const existmember = await Membre.findById(assignerA);
+        if(!existmember) return res.status(404).json({message: "L'Id de l'utilisateur n'existe pas"});
+        if(existmember.role !== 'membre') return res.status(400).json({message: "Une tache ne peut être assignée qu'à un simple membre"});
+
+        if (requester.role !== 'admin' && (requester.role !== 'leader' || existmember.leaderId.toString() !== requester.id)){
+            return res.status(400).json({message: "Le leader n'assigne une tache qu'à un membre de son équipe"});
+        } 
         const newTask = new Tache({
             titre,
             description,
             status,
             priorite,
             dateEcheance,
+            assignerA,
             createdBy: req.user.id
         });
 
@@ -23,6 +34,19 @@ exports.addTache = async(req, res) =>{
 //Modifier une tache par l'id
 exports.updateTask = async(req, res) => {
     try{
+        const requester = req.user;
+        const task = await Tache.findById(req.params.id).populate('assignerA');
+
+        if (!task) {
+            return res.status(400).json({ message: "tache non trouvé" });
+        }
+
+    if (requester.role !== 'admin' &&
+        !(requester.role === 'membre' && task.assignerA._id.toString() === requester.id) &&
+        !(requester.role === 'leader' && task.assignerA.leaderId.toString() === requester.id)) {
+          return res.status(403).json({ message: "Vous n'êtes pas autorisé à modifier cette tâche" });
+        }
+ 
         const tache = await Tache.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -101,13 +125,25 @@ exports.getTask = async(req, res) =>{
 }
 
 //Supprimer une tache par id
-exports.deleteTask = async(req, res) =>{
-    try{
-        const user = await Tache.findByIdAndDelete(req.params.id);
-        if(!user) return res.status(404).json({message: "Aucune tache touvée"});
+exports.deleteTask = async (req, res) => {
+    try {
+        const requester = req.user;
+        const task = await Tache.findById(req.params.id).populate("assignerA");
+        
+        if (!task) {
+            return res.status(404).json({ message: "Aucune tâche trouvée" });
+        }
 
-        res.status(200).json({message: "Tache supprimée avec succès"});
-    }catch(err){
-        res.status(500).json({message: "Erreur du serveur", erreur: err.message});
+        // Vérification des droits
+        if (requester.role !== 'admin' &&
+            !(requester.role === 'leader' && task.assignerA.leaderId.toString() === requester.id)) {
+            return res.status(403).json({ message: "Vous n'êtes pas autorisé à supprimer cette tâche" });
+        }
+
+        await task.deleteOne();
+        res.status(200).json({ message: "Tâche supprimée avec succès" });
+
+    } catch (err) {
+        res.status(500).json({ message: "Erreur du serveur", erreur: err.message });
     }
 };
